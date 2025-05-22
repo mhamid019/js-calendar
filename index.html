@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Js dynamic calendar</title>
+    
+    <!-- icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Cal+Sans&family=Lexend:wght@100..900&family=Orbitron:wght@400..900&family=Pacifico&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+
+        /* this code is changed in media queries */
+        *{margin: 0; padding: 0; box-sizing: border-box;}
+        a {text-decoration: none;}
+        button, input[type="submit"] {cursor: pointer;}
+        html{font-family: "Lexend", system-ui, sans-serif; font-size: 15px;}
+        body{font-size: 16px;}
+        img{vertical-align: bottom;}
+        h1{font-size: 2.5rem;}
+        h2{font-size: 2rem;}
+        h3{font-size: 1.4rem;}
+        h4{font-size: 1.2rem;}
+        p {margin: 0.8rem 0;}
+        body {background: purple;}
+        .btn, select, [type="submit"], input[type="reset"], input[type="text"],input[type="number"],input[type="password"],input[type="search"],input[type="email"]{ height: 36px; padding: 8px 12px; border: 1px solid rgb(233, 219, 219); color: inherit; border-radius: 5px; vertical-align: middle; margin: 5px;}
+
+        body{
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            font-family: "Lexend", sans-serif;
+            align-items: center;
+            /* background: radial-gradient(rgb(97, 115, 157), rgb(0, 0, 34)); */
+        }
+
+        .container {background: #fee; width: 450px; border-radius: 10px; padding: 2rem 1rem; box-shadow: 0 0 14px rgb(70, 62, 62);}
+        .container header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 0.5rem 1.4rem;
+            font-weight: bold;
+        }
+        header .current-date {font-size: 1.45rem; color: navy; text-shadow: 1px 1px 2px rgb(145, 160, 231);}
+        header .icons i {
+            width: 30px;
+            height: 30px;
+            background: rgb(82, 237, 175);
+            line-height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            color: rgb(98, 77, 77);
+            cursor: pointer;
+            margin: 0 1px;
+        }
+        header .icons i:hover {background: rgb(43, 224, 151);}
+        .calendar ul {display: flex; list-style: none; flex-wrap:  wrap;}
+        .calendar .weeks li {font-weight: bold; color: rgb(60, 92, 161);}
+        .calendar .weeks .sunday {color: rgb(212, 148, 0);}
+        .calendar .days li {margin-top: 30px; cursor: pointer; z-index: 1;}
+        .calendar .days .inactive {color: rgb(169, 195, 195);}
+        .calendar ul li {
+            position: relative;
+            width: calc(100% / 7);
+            text-align: center;
+        }
+        .calendar .days li::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+        .calendar .days li:hover::before {background: rgb(227, 215, 215);}
+        .calendar .days li.active::before {background: rgb(2, 208, 136);}
+
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="current-date"></div>
+            <div class="icons">
+                <i id="prev" class="fa-regular fa-circle-left"></i>
+                <i id="next" class="fa-regular fa-circle-right"></i>
+            </div>
+        </header>
+        <div class="calendar">
+            <ul class="weeks">
+                <li class="sunday">Sun</li>
+                <li>Mon</li>
+                <li>Tue</li>
+                <li>Wed</li>
+                <li>Thu</li>
+                <li>Fri</li>
+                <li>Sat</li>
+            </ul>
+            <ul class="days">
+                <!-- <li class="inactive">28</li>
+                <li class="inactive">29</li>
+                <li class="inactive">30</li>
+                <li class="inactive">31</li>
+                <li>1</li>
+                <li>2</li>
+                <li>3</li>
+                <li>4</li>
+                <li>5</li>
+                <li>6</li>
+                <li>7</li>
+                <li>8</li>
+                <li>9</li>
+                <li>10</li>
+                <li>11</li>
+                <li>12</li>
+                <li>13</li>
+                <li>14</li>
+                <li>15</li>
+                <li>16</li>
+                <li>17</li>
+                <li>18</li>
+                <li>19</li>
+                <li class="active">20</li>
+                <li>21</li>
+                <li>22</li>
+                <li>23</li>
+                <li>24</li>
+                <li>25</li>
+                <li>26</li>
+                <li>27</li>
+                <li>28</li>
+                <li>29</li>
+                <li>30</li>
+                <li class="inactive">1</li> -->
+            </ul>
+        </div>
+    </div>
+
+    
+    <script>
+    
+    const currentDate = document.querySelector(".current-date");
+    const getDays = document.querySelector(".days");
+    const prevNextIcon = document.querySelectorAll(".icons i");
+    
+    // getting new date, current year and month
+    let date = new Date(),
+    currentYear = date.getFullYear(),
+    currentMonth = date.getMonth();
+    
+    const months = ["January", "February", "March", "April", "May", "June", 
+                    "July", "August", "September", "October", "November", "December"];
+                    
+    const renderCalendar = () => {
+        let firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay(),                 // for first date of month
+        lastDateOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate(),                // for last date of month
+        lastDayOfMonth = new Date(currentYear, currentMonth, lastDateOfMonth).getDay(),        // for last day of month
+        lastDateOfLastMonth = new Date(currentYear, currentMonth, 0).getDate();                // for last date of previous month
+        let liTag = "";
+
+        // creating li of previous month last days
+        for (let i = firstDayOfMonth; i > 0; i--){     
+            liTag += `<li class="inactive">${lastDateOfLastMonth - i + 1}</li>`;
+        }
+
+        // creating li of all days of current month
+        for(let i = 1; i <= lastDateOfMonth; i++) {
+            let isToday = i === date.getDate() && currentMonth === new Date().getMonth()
+                            && currentYear === new Date().getFullYear() ? "active" : "";
+            liTag += `<li class="${isToday}">${i}</li>`;
+        }
+
+        // creating li of next month first days
+        for(let i = lastDayOfMonth; i < 6; i++) {
+            liTag += `<li class="inactive">${i - lastDayOfMonth + 1}</li>`;
+        }
+
+        currentDate.innerHTML = `${months[currentMonth]} ${currentYear}`;
+        getDays.innerHTML = liTag;
+        // console.log(lastDateOfMonth);
+    };
+    renderCalendar();
+
+    prevNextIcon.forEach(icon => {
+        icon.addEventListener("click", () => {              // click events on both icons
+            currentMonth = icon.id === "prev" ? currentMonth - 1 : currentMonth + 1;
+            
+            // if current month is less than 0 or greater than 11 
+            if(currentMonth < 0 || currentMonth > 11) {
+                // creating a new date of current year and month and pass it as a date value
+                date = new Date(currentYear, currentMonth);
+                // updating current year with new date year
+                currentYear = date.getFullYear();          
+                // updating current month with new date month
+                currentMonth = date.getMonth();
+            } else { // else pass a new date as date value
+                date = new Date();
+            }
+            renderCalendar();
+        });
+        
+    });
+
+        
+
+
+    </script>
+
+</body>
+</html> 
